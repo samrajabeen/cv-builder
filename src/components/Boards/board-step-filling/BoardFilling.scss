@@ -1,0 +1,73 @@
+@import "../../variables.scss";
+.board {
+  .ad-mobile {
+    display: none;
+  }
+  .board-heading {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+  }
+  .cv {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    .pagination {
+      list-style-type: none;
+      padding: 0;
+      li {
+        display: inline;
+        padding: 0px 5px;
+        cursor: pointer;
+      }
+    }
+    .ads {
+      text-align: center;
+    }
+    border-radius: 6px;
+    .cvAction {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+      button {
+        margin-right: 10px;
+      }
+      .selectTemplateLink {
+        cursor: pointer;
+        display: inline;
+        font-size: 16px;
+        img {
+          width: 19px;
+          vertical-align: middle;
+        }
+      }
+    }
+  }
+  .chipInput{
+    font-family: $font;
+    background-color: #F8FAFE;
+    border: "none";
+    height: "auto";
+    padding-top: 14px;
+    padding-bottom: 14px;
+    font-size: 15px;
+    
+  }
+  
+
+  button {
+    cursor: pointer;
+    align-self: center;
+    font-size: 22px;
+  }
+}
+#Resume {
+  background-color: white;
+  width: 470px;
+  border-radius: 11px;
+  margin: auto;
+}
