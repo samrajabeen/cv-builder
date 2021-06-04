@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import firebase from 'firebase';
 import "./BoardFilling.scss";
 // Importing packages that will help us to transfrom a div into a pdf ,  Div --> Canvas(jpeg) --> Pdf
 import jsPDF from "jspdf";
@@ -64,6 +65,26 @@ class BoardFilling extends Component {
       this.setState({ text: value });
     }
   };
+  async AddCategory(userId,resumeId) {
+    try {
+      const db = firebase.firestore();
+      await db.collection("users").doc(userId).collection("resumes").doc(resumeId).collection("categories").add({
+        SelectCategory: this.state.SelectCategory,
+        Keywords: this.state.Keywords,
+        text:this.state.text
+      }) 
+      this.setState({
+        SelectCategory: '',
+        Keywords: '',
+        text: ''
+      });
+      
+    } catch (error) {
+      console.log(error)
+    }
+   
+  };
+
   addPage() {
     this.setState((prevState, props) => ({
       page: prevState.page + 1,
@@ -431,11 +452,13 @@ class BoardFilling extends Component {
                   marginBottom: "10%",
                 }}
               >
-                <form>
+                <form onSubmit={this.AddCategory}>
                 <DropdownInput
                   handleInputs={this.handleInputs}
                   options={["Job", "Career", "Experiences"]}
                   title="Select Category"
+                  onChange={this.handleInputs}
+                  value={this.state.SelectCategory}
                 />
                 <p
                   style={{
@@ -451,11 +474,15 @@ class BoardFilling extends Component {
                   disableUnderline={true}
                   defaultValue={[]}
                   style={{ width: "100%" }}
+                  onChange={this.handleInputs}
+                  value={this.state.Keywords}
                 />
 
                 <SimpleTextArea
                   handleInputs={this.handleInputs}
                   title="Enter Text"
+                  onChange={this.handleInputs}
+                  value={this.state.text}
                 />
                 <button
                   style={{
