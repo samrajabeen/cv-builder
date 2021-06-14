@@ -143,11 +143,11 @@ class Login extends Component {
         {/* Modal Footer */}
         <div className="modalFooter">
           <span style={{ color: "black" }}>
-            Don't have and account?{" "}
+            Don't have and account?
             <a onClick={() => this.props.handleNavigationClick()}>Sign up</a>
           </span>
           <span style={{ color: "black" }}>
-            Lost 't your password?{" "}
+            Lost your password?
             <a onClick={() => this.props.showPasswordRecovery()}>
               Recover password
             </a>

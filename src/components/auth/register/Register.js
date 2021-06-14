@@ -65,7 +65,10 @@ class Register extends Component {
                         <Input title="Email" handleInputs={this.handleInputs} />
                         <Input type="Password" title="Password" handleInputs={this.handleInputs} />
                         <Input type="Password" title="Repeat Password" handleInputs={this.handleInputs} />
+                        <p className="policy">By clicking the "Register" button, you are creating an account with Creme Talent, and you agree to our Terms of Use and Privacy Policy.</p>
                         <input className="inputSubmit" value="Register" type="submit" />
+                        
+                        
                     </form>
                 </div>
                 {/* Modal Footer */}

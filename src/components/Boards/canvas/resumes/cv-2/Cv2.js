@@ -62,13 +62,13 @@ class Cv2 extends Component {
                 item:
                     <Group y={index == 0 ? TotalHeightToAdd : TotalHeightToAdd + 10} ref={node => { this.educationsRefs[index] = node }}>
                         {/* Employer */}
-                        <Text x={140} y={10} width={70} fontSize={6} fontFamily="Poppins" text={this.props.values.educations[index].school} fontStyle="bold"></Text>
+                        <Text x={140} y={10} width={70} fontSize={12} fontFamily="Poppins" text={this.props.values.educations[index].school} fontStyle="bold"></Text>
                         {/* Duration */}
-                        <Text x={140} y={22} width={70} fontSize={5} fontFamily="Poppins" text={this.props.values.educations[index].started + " - " + this.props.values.educations[index].finished} ></Text>
+                        <Text x={140} y={22} width={70} fontSize={12} fontFamily="Poppins" text={this.props.values.educations[index].started + " - " + this.props.values.educations[index].finished} ></Text>
                         {/* Job Title */}
-                        <Text x={215} y={10} fontSize={6} width={230} fontFamily="Poppins" text={this.props.values.educations[index].degree} fontStyle="bold"></Text>
+                        <Text x={215} y={10} fontSize={12} width={230} fontFamily="Poppins" text={this.props.values.educations[index].degree} fontStyle="bold"></Text>
                         {/* Job Description */}
-                        <Text x={215} y={22} fontSize={5} width={230} fontFamily="Poppins" text={this.props.values.educations[index].description} ></Text>
+                        <Text x={215} y={22} fontSize={12} width={230} fontFamily="Poppins" text={this.props.values.educations[index].description} ></Text>
                     </Group>,
                 height: index > 0 ? this.educationsHeightToAdd[index - 1] : 0
             }
@@ -86,7 +86,7 @@ class Cv2 extends Component {
             skillsObject[index] = {
                 item:
                     <Group y={heightToAdd} x={40 + ((numberInLine) * 100)}>
-                        <Text text={this.props.values.skills[index].name} fontFamily="Poppins" fontSize={6} fontStyle="bold" />
+                        <Text text={this.props.values.skills[index].name} fontFamily="Poppins" fontSize={12} fontStyle="bold" />
                         {/* Rating */}
                         <Group x={60}>
                             <Circle x={4} y={3} width={5} fill={this.props.values.skills[index].rating > 0 ? "#F0C30E" : "#D3D3D3"}></Circle>
@@ -145,15 +145,15 @@ class Cv2 extends Component {
                         <ImageCanvas width={22} height={22} x={150} y={135} image={ImageCall} />
                         {/* Phone Call */}
                         <Text text="Phone" fontSize={9} fontFamily="Poppins" fontStyle="bold" x={180} y={137} />
-                        <Text width={80} text={this.props.values.phone} fontSize={5} fontFamily="Poppins" x={180} y={150} />
+                        <Text width={80} text={this.props.values.phone} fontSize={7} fontFamily="Poppins" x={180} y={150} />
                         {/* Phone Call */}
                         <ImageCanvas width={22} height={22} x={242} y={135} image={ImagEmail} />
                         <Text text="Email" fontSize={9} fontFamily="Poppins" fontStyle="bold" x={270} y={137} />
-                        <Text width={50} text={this.props.values.email} fontSize={5} fontFamily="Poppins" x={270} y={150} />
+                        <Text width={50} text={this.props.values.email} fontSize={7} fontFamily="Poppins" x={270} y={150} />
                         {/* Address  */}
                         <ImageCanvas width={22} height={22} x={330} y={135} image={ImageAddress} />
                         <Text text="Address" fontSize={9} fontFamily="Poppins" fontStyle="bold" x={355} y={137} />
-                        <Text width={80} text={this.props.values.address + ", " + this.props.values.country} fontSize={5} fontFamily="Poppins" x={355} y={150} />
+                        <Text width={80} text={this.props.values.address + ", " + this.props.values.country} fontSize={7} fontFamily="Poppins" x={355} y={150} />
                     </Group>
                     {/* Bottom Rectangle */}
                     <Rect width={310} height={2} x={140} y={170} fill="black" />
@@ -161,7 +161,7 @@ class Cv2 extends Component {
                     <Group y={175} ref={node => { this.summaryRef = node }}>
                         {/* Section Title */}
                         <Text y={5} x={20} width={120} fontFamily="Poppins" fontStyle="bold" fontSize={14} text="PROFESSIONAL DETAILS"></Text>
-                        <Text y={5} x={140} width={300} fontFamily="Poppins" fontSize={5} text={this.props.values.summary}></Text>
+                        <Text y={5} x={140} width={300} fontFamily="Poppins" fontSize={12} text={this.props.values.summary}></Text>
                     </Group>
                     {/* Employments  Section */}
                     <Group

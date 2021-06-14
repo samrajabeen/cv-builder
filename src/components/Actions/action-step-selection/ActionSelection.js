@@ -36,7 +36,7 @@ class ActionSelection extends Component {
           </div>
           <CSSTransition appear={true} in={true} classNames="fade" timeout={1000}>
             <div className="body">
-              <h1>Select a <span> template </span> from the list.</h1>
+              <h2>Select a <span> template </span> from the list.</h2>
               <button onClick={this.props.handlePreviewToggle} className="btn-default  mobile-only">
                 Templates
             </button>

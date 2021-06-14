@@ -85,10 +85,10 @@ class ActionIntroduction extends Component {
           </div>
           <div className="body">
           <br></br>
-            <h1>
+            <h2>
               
             Welcome to Professional <span> CV Builder</span> from Creme Talent
-            </h1>
+            </h2>
             
             <ul>
             Build Your CV for FREE in three easy steps

@@ -65,25 +65,8 @@ class BoardFilling extends Component {
       this.setState({ text: value });
     }
   };
-  async AddCategory(userId,resumeId) {
-    try {
-      const db = firebase.firestore();
-      await db.collection("users").doc(userId).collection("resumes").doc(resumeId).collection("categories").add({
-        SelectCategory: this.state.SelectCategory,
-        Keywords: this.state.Keywords,
-        text:this.state.text
-      }) 
-      this.setState({
-        SelectCategory: '',
-        Keywords: '',
-        text: ''
-      });
-      
-    } catch (error) {
-      console.log(error)
-    }
-   
-  };
+  
+  
 
   addPage() {
     this.setState((prevState, props) => ({
@@ -452,11 +435,12 @@ class BoardFilling extends Component {
                   marginBottom: "10%",
                 }}
               >
-                <form onSubmit={this.AddCategory}>
+                <form id="new-form" >
                 <DropdownInput
                   handleInputs={this.handleInputs}
                   options={["Job", "Career", "Experiences"]}
                   title="Select Category"
+                  name="SelectCategory"
                   onChange={this.handleInputs}
                   value={this.state.SelectCategory}
                 />
@@ -481,6 +465,7 @@ class BoardFilling extends Component {
                 <SimpleTextArea
                   handleInputs={this.handleInputs}
                   title="Enter Text"
+                  name="text"
                   onChange={this.handleInputs}
                   value={this.state.text}
                 />
@@ -518,6 +503,8 @@ class BoardFilling extends Component {
                   Skip
                 </button>
                 <button
+                  onClick={() => this.saveToDatabase()}
+                  style={{ fontSize: "15px" }}
                   className="btn-default"
                   style={{
                     fontSize: "16px",

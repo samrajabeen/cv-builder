@@ -1,5 +1,7 @@
 import firebase from 'firebase';
 import fire from '../conf/fire';
+import BoardFilling from "../components/Boards/board-step-filling/BoardFilling"
+const form = document.querySelector('#new-form')
 function addResume(userId) {
   localStorage.removeItem("currentResumeItem")
   const db = firebase.firestore();
