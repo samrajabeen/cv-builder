@@ -1,43 +1,46 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import firebase from 'firebase';
-import "./BoardFilling.scss";
+import './BoardFilling.scss';
 // Importing packages that will help us to transfrom a div into a pdf ,  Div --> Canvas(jpeg) --> Pdf
-import jsPDF from "jspdf";
-import conf from "../../../conf/configuration";
-import Ad728x90 from "../../../assets/ads/728x90.png";
-import Ad300x50 from "../../../assets/ads/300x50.png";
-import MenuImg from "../../../assets/menu.png";
-import Canvas from "../canvas/Canvas";
-import ChipInput from "material-ui-chip-input";
+import jsPDF from 'jspdf';
+import conf from '../../../conf/configuration';
+import Ad728x90 from '../../../assets/ads/728x90.png';
+import Ad300x50 from '../../../assets/ads/300x50.png';
+import MenuImg from '../../../assets/menu.png';
+import Canvas from '../canvas/Canvas';
+import ChipInput from 'material-ui-chip-input';
 
 // Toasts
-import Toasts from "../../Toasts/Toats";
-import {
+import Toasts from '../../Toasts/Toats';
+import addResume, {
   setResumePropertyPerUser,
   addEmployments,
   addEducations,
   addSkills,
-} from "../../../firestore/dbOperations";
-import { IncrementDownloads } from "../../../firestore/dbOperations";
+  addCategories
+} from '../../../firestore/dbOperations';
+import { IncrementDownloads } from '../../../firestore/dbOperations';
 // Animation Library
-import { motion, AnimatePresence } from "framer-motion";
-import SimpleInput from "../../Form/simple-input/SimpleInput";
-import DropdownInput from "../../Form/dropdown-input/DropdownInput";
-import SimpleTextArea from "../../Form/simple-textarea/SimpleTextarea";
+import { motion, AnimatePresence } from 'framer-motion';
+import SimpleInput from '../../Form/simple-input/SimpleInput';
+import DropdownInput from '../../Form/dropdown-input/DropdownInput';
+import SimpleTextArea from '../../Form/simple-textarea/SimpleTextarea';
+import { Link, withRouter } from 'react-router-dom';
 class BoardFilling extends Component {
   constructor(props) {
     super(props);
     this.state = {
       chips: [],
-      SelectCategory: "",
-      Keywords: "", /// this is the title of the component . we will change it based on input change from ( SimpleInput )
-      text: "",
+      SelectCategory: '',
+      Keywords: [], /// this is the title of the component . we will change it based on input change from ( SimpleInput )
+      text: '',
       triggerDownload: false,
       page: 1,
       currentPage: 1,
       isSuccessToastVisible: false,
       isDownloadToastVisible: false,
       count: 0,
+      isSaveChangesToastVisible: false
     };
     this.addPage = this.addPage.bind(this);
     this.nextPage = this.nextPage.bind(this);
@@ -46,44 +49,52 @@ class BoardFilling extends Component {
     this.ShowToast = this.ShowToast.bind(this);
     this.saveToDatabase = this.saveToDatabase.bind(this);
   }
-  addChip = (value) => {
+  addChip = value => {
     const chips = this.state.chips.slice();
     chips.push(value);
     this.setState({ chips });
   };
-  removeChip = (index) => {
+  removeChip = index => {
     const chips = this.state.chips.slice();
     chips.splice(index, 1);
     this.setState({ chips });
   };
   handleInputs = (input, value) => {
-    if (input === "Select Category") {
+    console.log({ input, value });
+    if (input === 'Select Category') {
       this.setState({ SelectCategory: value });
-    } else if (input === "Keywords") {
-      this.setState({ Keywords: value });
-    } else if (input === "Enter Text") {
+    } else if (input === 'Enter Text') {
       this.setState({ text: value });
+    } else {
+      this.setState({ Keywords: input });
     }
   };
-  
-  
 
   addPage() {
     this.setState((prevState, props) => ({
-      page: prevState.page + 1,
+      page: prevState.page + 1
     }));
   }
   nextPage() {
+    console.log('called');
     this.setState((prevState, props) => ({
-      currentPage: prevState.currentPage + 1,
+      currentPage: prevState.currentPage + 1
     }));
   }
   previousPage() {
     this.setState((prevState, props) => ({
-      currentPage: prevState.currentPage - 1,
+      currentPage: prevState.currentPage - 1
     }));
   }
   componentDidMount() {
+    const currentResume = JSON.parse(localStorage.getItem('currentResumeItem'));
+    console.log('categories', currentResume?.categories);
+    this.handleInputs('Select Category');
+    this.setState({
+      text: currentResume?.categories?.description,
+      SelectCategory: currentResume?.categories?.categories,
+      Keywords: currentResume?.categories?.keywords.split(',')
+    });
     for (let index = 0; index < 2; index++) {
       setTimeout(() => {
         if (this.state.count < 2) {
@@ -98,47 +109,48 @@ class BoardFilling extends Component {
   }
   // Showing  Toast
   ShowToast(type) {
-    if (type == "Success") {
+    if (type == 'Success') {
       setTimeout(() => {
         this.setState((prevState, props) => ({
           isSuccessToastVisible: !prevState.isSuccessToastVisible,
+          isSaveChangesToastVisible: false
         }));
       }, 3000);
       this.setState((prevState, props) => ({
-        isSuccessToastVisible: !prevState.isSuccessToastVisible,
+        isSuccessToastVisible: !prevState.isSuccessToastVisible
       }));
     }
-    if (type == "Download") {
+    if (type == 'Download') {
       setTimeout(() => {
         this.setState((prevState, props) => ({
           triggerDownload: true,
-          isDownloadToastVisible: !prevState.isDownloadToastVisible,
+          isDownloadToastVisible: !prevState.isDownloadToastVisible
         }));
       }, 8000);
       this.setState((prevState, props) => ({
-        isDownloadToastVisible: !prevState.isDownloadToastVisible,
+        isDownloadToastVisible: !prevState.isDownloadToastVisible
       }));
     }
   }
   // Saving into database But first we check which field has been edited to avoid unecessary writes in  database
   saveToDatabase() {
     var numberOfInputs = 0;
-    if (!localStorage.getItem("currentResumeItem")) {
+    if (!localStorage.getItem('currentResumeItem')) {
       this.currentResume = {};
     } else {
       this.currentResume = JSON.parse(
-        localStorage.getItem("currentResumeItem")
+        localStorage.getItem('currentResumeItem')
       );
     }
     if (
       this.currentResume.firstname !== this.props.values.firstname ||
       this.currentResume.firstname == undefined
     ) {
-      console.log("Firstname need to be changed in database");
+      console.log('Firstname need to be changed in database');
       setResumePropertyPerUser(
-        localStorage.getItem("user"),
-        localStorage.getItem("currentResumeId"),
-        "firstname",
+        localStorage.getItem('user'),
+        localStorage.getItem('currentResumeId'),
+        'firstname',
         this.props.values.firstname
       );
     }
@@ -146,11 +158,11 @@ class BoardFilling extends Component {
       this.currentResume.lastname !== this.props.values.lastname ||
       this.currentResume.lastname == undefined
     ) {
-      console.log("Firstname need to be changed in database");
+      console.log('Firstname need to be changed in database');
       setResumePropertyPerUser(
-        localStorage.getItem("user"),
-        localStorage.getItem("currentResumeId"),
-        "lastname",
+        localStorage.getItem('user'),
+        localStorage.getItem('currentResumeId'),
+        'lastname',
         this.props.values.lastname
       );
     }
@@ -158,11 +170,11 @@ class BoardFilling extends Component {
       this.currentResume.email !== this.props.values.email ||
       this.currentResume.email == undefined
     ) {
-      console.log("Firstname need to be changed in database");
+      console.log('Firstname need to be changed in database');
       setResumePropertyPerUser(
-        localStorage.getItem("user"),
-        localStorage.getItem("currentResumeId"),
-        "email",
+        localStorage.getItem('user'),
+        localStorage.getItem('currentResumeId'),
+        'email',
         this.props.values.email
       );
     }
@@ -170,11 +182,11 @@ class BoardFilling extends Component {
       this.currentResume.phone !== this.props.values.phone ||
       this.currentResume.phone == undefined
     ) {
-      console.log("Firstname need to be changed in database");
+      console.log('Firstname need to be changed in database');
       setResumePropertyPerUser(
-        localStorage.getItem("user"),
-        localStorage.getItem("currentResumeId"),
-        "phone",
+        localStorage.getItem('user'),
+        localStorage.getItem('currentResumeId'),
+        'phone',
         this.props.values.phone
       );
     }
@@ -182,11 +194,11 @@ class BoardFilling extends Component {
       this.currentResume.occupation !== this.props.values.occupation ||
       this.currentResume.occupation == undefined
     ) {
-      console.log("Firstname need to be changed in database");
+      console.log('Firstname need to be changed in database');
       setResumePropertyPerUser(
-        localStorage.getItem("user"),
-        localStorage.getItem("currentResumeId"),
-        "occupation",
+        localStorage.getItem('user'),
+        localStorage.getItem('currentResumeId'),
+        'occupation',
         this.props.values.occupation
       );
     }
@@ -194,11 +206,11 @@ class BoardFilling extends Component {
       this.currentResume.country !== this.props.values.country ||
       this.currentResume.country == undefined
     ) {
-      console.log("Firstname need to be changed in database");
+      console.log('Firstname need to be changed in database');
       setResumePropertyPerUser(
-        localStorage.getItem("user"),
-        localStorage.getItem("currentResumeId"),
-        "country",
+        localStorage.getItem('user'),
+        localStorage.getItem('currentResumeId'),
+        'country',
         this.props.values.country
       );
     }
@@ -206,11 +218,11 @@ class BoardFilling extends Component {
       this.currentResume.city !== this.props.values.city ||
       this.currentResume.city == undefined
     ) {
-      console.log("Firstname need to be changed in database");
+      console.log('Firstname need to be changed in database');
       setResumePropertyPerUser(
-        localStorage.getItem("user"),
-        localStorage.getItem("currentResumeId"),
-        "city",
+        localStorage.getItem('user'),
+        localStorage.getItem('currentResumeId'),
+        'city',
         this.props.values.city
       );
     }
@@ -218,11 +230,11 @@ class BoardFilling extends Component {
       this.currentResume.address !== this.props.values.address ||
       this.currentResume.address == undefined
     ) {
-      console.log("Firstname need to be changed in database");
+      console.log('Firstname need to be changed in database');
       setResumePropertyPerUser(
-        localStorage.getItem("user"),
-        localStorage.getItem("currentResumeId"),
-        "address",
+        localStorage.getItem('user'),
+        localStorage.getItem('currentResumeId'),
+        'address',
         this.props.values.address
       );
     }
@@ -230,11 +242,11 @@ class BoardFilling extends Component {
       this.currentResume.postalcode !== this.props.values.postalcode ||
       this.currentResume.postalcode == undefined
     ) {
-      console.log("Firstname need to be changed in database");
+      console.log('Firstname need to be changed in database');
       setResumePropertyPerUser(
-        localStorage.getItem("user"),
-        localStorage.getItem("currentResumeId"),
-        "postalcode",
+        localStorage.getItem('user'),
+        localStorage.getItem('currentResumeId'),
+        'postalcode',
         this.props.values.postalcode
       );
     }
@@ -242,11 +254,11 @@ class BoardFilling extends Component {
       this.currentResume.dateofbirth !== this.props.values.dateofbirth ||
       this.currentResume.dateofbirth == undefined
     ) {
-      console.log("dateofbirth need to be changed in database");
+      console.log('dateofbirth need to be changed in database');
       setResumePropertyPerUser(
-        localStorage.getItem("user"),
-        localStorage.getItem("currentResumeId"),
-        "dateofbirth",
+        localStorage.getItem('user'),
+        localStorage.getItem('currentResumeId'),
+        'dateofbirth',
         this.props.values.dateofbirth
       );
     }
@@ -254,11 +266,11 @@ class BoardFilling extends Component {
       this.currentResume.drivinglicense !== this.props.values.drivinglicense ||
       this.currentResume.drivinglicense == undefined
     ) {
-      console.log("Firstname need to be changed in database");
+      console.log('Firstname need to be changed in database');
       setResumePropertyPerUser(
-        localStorage.getItem("user"),
-        localStorage.getItem("currentResumeId"),
-        "drivinglicense",
+        localStorage.getItem('user'),
+        localStorage.getItem('currentResumeId'),
+        'drivinglicense',
         this.props.values.drivinglicense
       );
     }
@@ -266,11 +278,11 @@ class BoardFilling extends Component {
       this.currentResume.nationality !== this.props.values.nationality ||
       this.currentResume.nationality == undefined
     ) {
-      console.log("Firstname need to be changed in database");
+      console.log('Firstname need to be changed in database');
       setResumePropertyPerUser(
-        localStorage.getItem("user"),
-        localStorage.getItem("currentResumeId"),
-        "nationality",
+        localStorage.getItem('user'),
+        localStorage.getItem('currentResumeId'),
+        'nationality',
         this.props.values.nationality
       );
     }
@@ -278,40 +290,59 @@ class BoardFilling extends Component {
       this.currentResume.summary !== this.props.values.summary ||
       this.currentResume.summary == undefined
     ) {
-      console.log("Firstname need to be changed in database");
+      console.log('Firstname need to be changed in database');
       setResumePropertyPerUser(
-        localStorage.getItem("user"),
-        localStorage.getItem("currentResumeId"),
-        "summary",
+        localStorage.getItem('user'),
+        localStorage.getItem('currentResumeId'),
+        'summary',
         this.props.values.summary
       );
     }
     // Adding employments
     addEmployments(
-      localStorage.getItem("user"),
-      localStorage.getItem("currentResumeId"),
+      localStorage.getItem('user'),
+      localStorage.getItem('currentResumeId'),
       this.props.values.employments
     );
     // adding educations if presented
     addEducations(
-      localStorage.getItem("user"),
-      localStorage.getItem("currentResumeId"),
+      localStorage.getItem('user'),
+      localStorage.getItem('currentResumeId'),
       this.props.values.educations
     );
     // adding skills if presented
     addSkills(
-      localStorage.getItem("user"),
-      localStorage.getItem("currentResumeId"),
+      localStorage.getItem('user'),
+      localStorage.getItem('currentResumeId'),
       this.props.values.skills
     );
-    this.ShowToast("Success");
+    this.ShowToast('Success');
   }
-  
+  handleSubmit = () => {
+    console.log('props,', this.props);
+    const { SelectCategory, text, Keywords } = this.state;
+    const user = localStorage.getItem('user');
+    const currentResumeId = localStorage.getItem('currentResumeId');
+    addCategories(
+      user,
+      currentResumeId,
+      SelectCategory,
+      text,
+      Keywords.toString()
+    );
+    this.setState(() => ({
+      isSaveChangesToastVisible: true
+    }));
+    this.ShowToast('Success');
+    this.props.history.push('/dashboard');
+  };
+
   render() {
+    console.log('history', this.props);
     return (
       <>
         {this.props.third === true ? (
-          <div className="board">
+          <div className='board'>
             <AnimatePresence>
               {this.state.isSuccessToastVisible && (
                 <motion.div
@@ -319,7 +350,13 @@ class BoardFilling extends Component {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                 >
-                  <Toasts type="Success" />
+                  <Toasts
+                    type={
+                      this.state.isSaveChangesToastVisible
+                        ? 'Changes Saved'
+                        : 'Success'
+                    }
+                  />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -330,18 +367,18 @@ class BoardFilling extends Component {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                 >
-                  <Toasts type="Download" />
+                  <Toasts type='Download' />
                 </motion.div>
               )}
             </AnimatePresence>
-            <div id="cv" className="cv">
-              <div className="cvWrapper">
-                <ul className="pagination">
+            <div id='cv' className='cv'>
+              <div className='cvWrapper'>
+                <ul className='pagination'>
                   <li onClick={() => this.previousPage()}> previous </li>
                   <li>1 / {this.state.page}</li>
                   <li onClick={() => this.nextPage()}> next </li>
                 </ul>
-                <div id="Resume">
+                <div id='Resume'>
                   <Canvas
                     currentResumeName={this.props.currentResumeName}
                     initialisePages={this.initialisePages}
@@ -357,20 +394,20 @@ class BoardFilling extends Component {
                 {/* <Canvas  triggerDownload={this.state.triggerDownload} values ={this.props.values} /> */}
                 {/* <CvBasic values ={this.props.values} />
                  */}
-                <div className="cvAction">
+                <div className='cvAction'>
                   <span
                     onClick={() => this.props.stepBack()}
-                    className="selectTemplateLink"
+                    className='selectTemplateLink'
                   >
-                    {" "}
+                    {' '}
                     <img src={MenuImg} /> Select Template
                   </span>
                   <div>
-                    {localStorage.getItem("user") && (
+                    {localStorage.getItem('user') && (
                       <button
                         onClick={() => this.saveToDatabase()}
-                        style={{ fontSize: "15px" }}
-                        className="btn-default"
+                        style={{ fontSize: '15px' }}
+                        className='btn-default'
                       >
                         Save as draft
                       </button>
@@ -378,8 +415,8 @@ class BoardFilling extends Component {
 
                     <button
                       onClick={this.props.change}
-                      style={{ fontSize: "15px" }}
-                      className="btn-default"
+                      style={{ fontSize: '15px' }}
+                      className='btn-default'
                     >
                       Next Page
                     </button>
@@ -390,8 +427,8 @@ class BoardFilling extends Component {
           </div>
         ) : (
           <>
-            <div className="board">
-              <div style={{ display: "none" }}>
+            <div className='board'>
+              <div style={{ display: 'none' }}>
                 <Canvas
                   currentResumeName={this.props.currentResumeName}
                   initialisePages={this.initialisePages}
@@ -410,7 +447,7 @@ class BoardFilling extends Component {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                   >
-                    <Toasts type="Success" />
+                    <Toasts type='Success' />
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -421,162 +458,167 @@ class BoardFilling extends Component {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                   >
-                    <Toasts type="Download" />
+                    <Toasts type='Download' />
                   </motion.div>
                 )}
               </AnimatePresence>
-              
+
               <div
                 style={{
-                  padding: "5%",
-                  background: "white",
-                  width: "60%",
-                  marginTop: "5%",
-                  marginBottom: "10%",
+                  padding: '5%',
+                  background: 'white',
+                  width: '60%',
+                  marginTop: '5%',
+                  marginBottom: '10%'
                 }}
               >
-                <form id="new-form" >
-                <DropdownInput
-                  handleInputs={this.handleInputs}
-                  options={["Job", "Career", "Experiences"]}
-                  title="Select Category"
-                  name="SelectCategory"
-                  onChange={this.handleInputs}
-                  value={this.state.SelectCategory}
-                />
-                <p
-                  style={{
-                    margin: "5px 0px",
-                    color: "#98A1B3",
-                    fontSize: "15px",
-                  }}
-                >
-                  Keywords
-                </p>
-                <ChipInput
-                  className="chipInput"
-                  disableUnderline={true}
-                  defaultValue={[]}
-                  style={{ width: "100%" }}
-                  onChange={this.handleInputs}
-                  value={this.state.Keywords}
-                />
+                <form id='new-form'>
+                  <DropdownInput
+                    handleInputs={this.handleInputs}
+                    options={['Job', 'Career', 'Experiences']}
+                    title='Select Category'
+                    name='SelectCategory'
+                    onChange={this.handleInputs}
+                    value={this.state.SelectCategory}
+                  />
+                  <p
+                    style={{
+                      margin: '5px 0px',
+                      color: '#98A1B3',
+                      fontSize: '15px'
+                    }}
+                  >
+                    Keywords
+                  </p>
+                  <ChipInput
+                    className='chipInput'
+                    disableUnderline={true}
+                    defaultValue={[]}
+                    title='Keywords'
+                    name='Keywords'
+                    style={{ width: '100%' }}
+                    onChange={this.handleInputs}
+                    value={this.state.Keywords}
+                  />
 
-                <SimpleTextArea
-                  handleInputs={this.handleInputs}
-                  title="Enter Text"
-                  name="text"
-                  onChange={this.handleInputs}
-                  value={this.state.text}
-                />
-                <button
-                  style={{
-                    fontSize: "15px",
-                    marginTop: "25px",
-                    marginLeft: "82%",
-                  }}
-                  className="btn-default"
-                
-                >
-                  Submit
-                </button>
+                  <SimpleTextArea
+                    handleInputs={this.handleInputs}
+                    title='Enter Text'
+                    name='text'
+                    onChange={this.handleInputs}
+                    value={this.state.text}
+                  />
+                  <button
+                    style={{
+                      fontSize: '15px',
+                      marginTop: '25px',
+                      marginLeft: '82%'
+                    }}
+                    className='btn-default'
+                    onClick={this.handleSubmit}
+                  >
+                    Submit
+                  </button>
                 </form>
               </div>
-              
+
               <div
                 style={{
-                  display: "flex",
-                  width: "80%",
-                  marginTop: "-5%",
-                  marginBottom: "5%",
+                  display: 'flex',
+                  width: '80%',
+                  marginTop: '-5%',
+                  marginBottom: '5%'
                 }}
               >
-                <button
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    fontSize: "18px",
-                    marginLeft: "7%",
-                    color: "white",
-                  }}
-                >
-                  Skip
-                </button>
+                <Link to={{ pathname: '/dashboard' }}>
+                  <button
+                    onClick={() => this.nextPage()}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      fontSize: '18px',
+                      marginLeft: '8%',
+                      color: 'white'
+                    }}
+                  >
+                    Skip
+                  </button>
+                </Link>
                 <button
                   onClick={() => this.saveToDatabase()}
-                  style={{ fontSize: "15px" }}
-                  className="btn-default"
+                  style={{ fontSize: '15px' }}
+                  className='btn-default'
                   style={{
-                    fontSize: "16px",
-                    marginLeft: "23%",
+                    fontSize: '16px',
+                    marginLeft: '23%'
                   }}
                 >
                   Save as Draft
                 </button>
                 <button
-                  className="btn-default"
-                  onClick={() => this.ShowToast("Download")}
+                  className='btn-default'
+                  onClick={() => this.ShowToast('Download')}
                   style={{
-                    fontSize: "16px",
-                    marginLeft: "3%",
+                    fontSize: '16px',
+                    marginLeft: '3%'
                   }}
                 >
                   Download Cv
                 </button>
               </div>
-              <div style={{ width: "50%" }}>
+              <div style={{ width: '50%' }}>
                 <div
                   style={{
-                    display: "flex",
-                    justifyContent: "center",
+                    display: 'flex',
+                    justifyContent: 'center',
 
-                    alignItems: "center",
+                    alignItems: 'center'
                   }}
                 >
                   <p
                     style={{
-                      fontSize: "22px",
-                      color: "black",
-                      fontWeight: "bold",
+                      fontSize: '22px',
+                      color: 'black',
+                      fontWeight: 'bold'
                     }}
                   >
                     Share
                   </p>
                   <i
                     style={{
-                      fontSize: "30px",
-                      color: "black",
-                      marginLeft: "20px",
-                      cursor: "pointer",
+                      fontSize: '30px',
+                      color: 'black',
+                      marginLeft: '20px',
+                      cursor: 'pointer'
                     }}
-                    className=" fa fa-facebook"
+                    className=' fa fa-facebook'
                   ></i>
                   <i
                     style={{
-                      fontSize: "30px",
-                      color: "black",
-                      marginLeft: "20px",
-                      cursor: "pointer",
+                      fontSize: '30px',
+                      color: 'black',
+                      marginLeft: '20px',
+                      cursor: 'pointer'
                     }}
-                    className=" fa fa-instagram"
+                    className=' fa fa-instagram'
                   ></i>
                   <i
                     style={{
-                      fontSize: "30px",
-                      color: "black",
-                      marginLeft: "20px",
-                      cursor: "pointer",
+                      fontSize: '30px',
+                      color: 'black',
+                      marginLeft: '20px',
+                      cursor: 'pointer'
                     }}
-                    className=" fa fa-linkedin"
+                    className=' fa fa-linkedin'
                   ></i>
                   <i
                     style={{
-                      fontSize: "30px",
-                      color: "black",
-                      marginLeft: "20px",
-                      cursor: "pointer",
+                      fontSize: '30px',
+                      color: 'black',
+                      marginLeft: '20px',
+                      cursor: 'pointer'
                     }}
-                    className=" fa fa-whatsapp"
+                    className=' fa fa-whatsapp'
                   ></i>
                 </div>
               </div>
@@ -587,4 +629,4 @@ class BoardFilling extends Component {
     );
   }
 }
-export default BoardFilling;
+export default withRouter(BoardFilling);

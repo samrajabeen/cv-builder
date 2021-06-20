@@ -3,39 +3,65 @@
      In order to build templates fast we used KonvaJS Library.
      Please take a look in their documentation where you will understand all the code bellow and how the templates are made
 */
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import { Stage, Layer, Rect, Circle, Text, Group } from 'react-konva';
-import Cv1 from './resumes/cv-1/Cv1'
-import Cv2 from './resumes/cv-2/Cv2'
-import Cv3 from './resumes/cv-3/Cv3'
-import Cv4 from './resumes/cv-4/Cv4'
+import Cv1 from './resumes/cv-1/Cv1';
+import Cv2 from './resumes/cv-2/Cv2';
+import Cv3 from './resumes/cv-3/Cv3';
+import Cv4 from './resumes/cv-4/Cv4';
 class Canvas extends Component {
-    constructor(props) {
-        super(props);
-        this.currentHeight = 0;
-    }
-    render() {
-        return (
-            <div>
-                {
-                
-                this.props.currentResumeName == "Cv1" ?
-                <Cv1 currentPage={this.props.currentPage} pages={this.props.pages} addPage={this.props.addPage} downloadEnded={this.props.downloadEnded} triggerDownload={this.props.triggerDownload} values={this.props.values} /> 
-                :
-                this.props.currentResumeName == "Cv2" ?
-                             <Cv2  initialisePages={this.props.initialisePages} pages={this.props.pages} addPage ={this.props.addPage} downloadEnded={this.props.downloadEnded} triggerDownload={this.props.triggerDownload} currentPage={this.props.currentPage} values = {this.props.values} /> 
-          :
-          this.props.currentResumeName == "Cv3" ?
-          <Cv3  initialisePages={this.props.initialisePages} pages={this.props.pages} addPage ={this.props.addPage} downloadEnded={this.props.downloadEnded} triggerDownload={this.props.triggerDownload} currentPage={this.props.currentPage} values = {this.props.values} /> 
-          :  
-          this.props.currentResumeName == "Cv4" && 
-          <Cv4  initialisePages={this.props.initialisePages} pages={this.props.pages} addPage ={this.props.addPage} downloadEnded={this.props.downloadEnded} triggerDownload={this.props.triggerDownload} currentPage={this.props.currentPage} values = {this.props.values} /> 
-
-          
-          } 
-                
-            </div>
-        )
-    }
+  constructor(props) {
+    super(props);
+    this.currentHeight = 0;
+  }
+  render() {
+    console.log('cv name>>', this.props.currentResumeName);
+    return (
+      <div>
+        {this.props.currentResumeName == 'Cv1' ? (
+          <Cv1
+            currentPage={this.props.currentPage}
+            pages={this.props.pages}
+            addPage={this.props.addPage}
+            downloadEnded={this.props.downloadEnded}
+            triggerDownload={this.props.triggerDownload}
+            values={this.props.values}
+          />
+        ) : this.props.currentResumeName == 'Cv2' ? (
+          <Cv2
+            initialisePages={this.props.initialisePages}
+            pages={this.props.pages}
+            addPage={this.props.addPage}
+            downloadEnded={this.props.downloadEnded}
+            triggerDownload={this.props.triggerDownload}
+            currentPage={this.props.currentPage}
+            values={this.props.values}
+          />
+        ) : this.props.currentResumeName == 'Cv3' ? (
+          <Cv3
+            initialisePages={this.props.initialisePages}
+            pages={this.props.pages}
+            addPage={this.props.addPage}
+            downloadEnded={this.props.downloadEnded}
+            triggerDownload={this.props.triggerDownload}
+            currentPage={this.props.currentPage}
+            values={this.props.values}
+          />
+        ) : (
+          this.props.currentResumeName == 'Cv4' && (
+            <Cv4
+              initialisePages={this.props.initialisePages}
+              pages={this.props.pages}
+              addPage={this.props.addPage}
+              downloadEnded={this.props.downloadEnded}
+              triggerDownload={this.props.triggerDownload}
+              currentPage={this.props.currentPage}
+              values={this.props.values}
+            />
+          )
+        )}
+      </div>
+    );
+  }
 }
 export default Canvas;

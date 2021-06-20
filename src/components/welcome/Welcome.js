@@ -1,32 +1,32 @@
-import React, { Component } from "react";
-import "./Welcome.scss";
-import Board from "../Boards/board/board";
-import Action from "../Actions/action/Action";
-import { CSSTransition } from "react-transition-group";
-import { Analytics } from "../Analytics";
+import React, { Component } from 'react';
+import './Welcome.scss';
+import Board from '../Boards/board/board';
+import Action from '../Actions/action/Action';
+import { CSSTransition } from 'react-transition-group';
+import { Analytics } from '../Analytics';
 // Models
-import EmploymentModel from "../../models/Employment";
-import EducationModel from "../../models/Education";
-import LanguageModel from "../../models/Language";
-import SkillModel from "../../models/Skills";
+import EmploymentModel from '../../models/Employment';
+import EducationModel from '../../models/Education';
+import LanguageModel from '../../models/Language';
+import SkillModel from '../../models/Skills';
 // Images
-import PreviewImg from "../../assets/preview.png";
-import NextImg from "../../assets/next.png";
+import PreviewImg from '../../assets/preview.png';
+import NextImg from '../../assets/next.png';
 // Firebase
-import fire from "../../conf/fire";
-import { InitialisationCheck } from "../../firestore/dbOperations";
+import fire from '../../conf/fire';
+import { InitialisationCheck } from '../../firestore/dbOperations';
 // Initialisation Component
-import InitialisationWrapper from "../initailisation/initialisationWrapper/initialisationWrapper";
+import InitialisationWrapper from '../initailisation/initialisationWrapper/initialisationWrapper';
 /// Animation Library
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from 'framer-motion';
 // This class is the source of truth. means that we will hold input states here
 class Welcome extends Component {
   constructor(props) {
     super(props);
     // This is the Parent Component that will contains all the data ( state )  of all its child component
     // From Here we will pass data to our Board Component ( Where resume is)
-    this.steps = ["Introduction", "Template Selection", "Adding Data"];
-    this.currentResume = JSON.parse(localStorage.getItem("currentResumeItem"));
+    this.steps = ['Introduction', 'Template Selection', 'Adding Data'];
+    this.currentResume = JSON.parse(localStorage.getItem('currentResumeItem'));
     /// Removing any nulls in the arrays of current resume
     if (this.currentResume !== null) {
       this.currentResume.employments = this.checkForNullsInArray(
@@ -50,79 +50,79 @@ class Welcome extends Component {
       currentStep: this.steps[0],
       user: null,
       redirect: null,
-      resumeName: "Cv4",
-      currentResumeName: "Cv4",
+      resumeName: 'Cv4',
+      currentResumeName: 'Cv4',
       currentResume: null,
-      title: "Untitled",
+      title: 'Untitled',
       progress: 0,
-      category: "",
-      Keywords: "",
-      detail: "",
+      category: '',
+      Keywords: '',
+      detail: '',
       firstname:
         this.currentResume != null &&
         this.currentResume.item.firstname !== undefined
           ? this.currentResume.item.firstname
-          : "",
+          : '',
       lastname:
         this.currentResume !== null &&
         this.currentResume.item.lastname !== undefined
           ? this.currentResume.item.lastname
-          : "",
+          : '',
       email:
         this.currentResume !== null &&
         this.currentResume.item.email !== undefined
           ? this.currentResume.item.email
-          : "",
+          : '',
       phone:
         this.currentResume !== null &&
         this.currentResume.item.phone !== undefined
           ? this.currentResume.item.phone
-          : "",
+          : '',
       occupation:
         this.currentResume !== null &&
         this.currentResume.item.occupation !== undefined
           ? this.currentResume.item.occupation
-          : "",
+          : '',
       country:
         this.currentResume !== null &&
         this.currentResume.item.country !== undefined
           ? this.currentResume.item.country
-          : "",
+          : '',
       city:
         this.currentResume !== null &&
         this.currentResume.item.city !== undefined
           ? this.currentResume.item.city
-          : "",
+          : '',
       address:
         this.currentResume !== null &&
         this.currentResume.item.address !== undefined
           ? this.currentResume.item.address
-          : "",
+          : '',
       postalcode:
         this.currentResume !== null &&
         this.currentResume.item.postalcode !== undefined
           ? this.currentResume.item.postalcode
-          : "",
+          : '',
       dateofbirth:
         this.currentResume !== null &&
         this.currentResume.item.dateofbirth !== undefined
           ? this.currentResume.item.dateofbirth
-          : "",
+          : '',
       drivinglicense:
         this.currentResume !== null &&
         this.currentResume.item.drivinglicense !== undefined
           ? this.currentResume.item.drivinglicense
-          : "",
+          : '',
       nationality:
         this.currentResume !== null &&
         this.currentResume.item.nationality !== undefined
           ? this.currentResume.item.nationality
-          : "",
+          : '',
       summary:
         this.currentResume !== null &&
         this.currentResume.item.summary !== undefined
           ? this.currentResume.item.summary
-          : "",
+          : '',
       photo: null,
       employments:
         this.currentResume !== null &&
@@ -140,7 +140,7 @@ class Welcome extends Component {
         this.currentResume !== null && this.currentResume.skills !== undefined
           ? this.currentResume.skills
           : [],
-      filledInputs: [],
+      filledInputs: []
     };
     this.authListener = this.authListener.bind(this);
     this.nextStep = this.nextStep.bind(this);
@@ -160,45 +160,45 @@ class Welcome extends Component {
     this.goThirdStep = this.goThirdStep.bind(this);
     // Triggering analytics initializer with the page the visitor is in
     var AnalyticsObject = Analytics;
-    AnalyticsObject("Homepage");
+    AnalyticsObject('Homepage');
   }
   /// Checking if  user is singed in
   authListener() {
-    fire.auth().onAuthStateChanged((user) => {
+    fire.auth().onAuthStateChanged(user => {
       if (user) {
         this.setState({ user: user });
-        localStorage.setItem("user", user.uid);
+        localStorage.setItem('user', user.uid);
       } else {
         this.setState({ user: null });
-        localStorage.removeItem("user");
+        localStorage.removeItem('user');
       }
     });
   }
   // Logout
   logout() {
     fire.auth().signOut();
-    localStorage.removeItem("currentResumeId");
-    localStorage.removeItem("currentResumeItem");
+    localStorage.removeItem('currentResumeId');
+    localStorage.removeItem('currentResumeItem');
     this.currentResume = null;
   }
   // Setting the current step
   setCurrentStep(step, isLoginModalShowed) {
     this.setState({
       currentStep: this.steps[0],
-      stepIndex: 0,
+      stepIndex: 0
     });
   }
   // go to third step
   goThirdStep() {
     this.setState({
       currentStep: this.steps[2],
-      stepIndex: 2,
+      stepIndex: 2
     });
   }
   changeView = () => {
-    console.log("click", this.state.third);
-    this.setState((prevState) => ({
-      third: !prevState.third,
+    console.log('click', this.state.third);
+    this.setState(prevState => ({
+      third: !prevState.third
     }));
   };
   // Removing any null in employments
@@ -213,17 +213,18 @@ class Welcome extends Component {
   componentDidMount() {}
   componentWillMount() {
     this.authListener();
-    InitialisationCheck().then((value) => {
-      if (value === "none" || value === undefined) {
+    InitialisationCheck().then(value => {
+      if (value === 'none' || value === undefined) {
         this.setState({ isInitialisationShowed: true });
       }
     });
     // checking if the user clicked in a resume in dashboard, to set it as the current resume
-    if (localStorage.getItem("currentResumeItem")) {
+    if (localStorage.getItem('currentResumeItem')) {
       this.setState({
-        currentResume: JSON.parse(localStorage.getItem("currentResumeItem")),
+        currentResume: JSON.parse(localStorage.getItem('currentResumeItem'))
       });
     }
+    console.log('this.props.match', this.props.match);
     /// check if the user comming from dashboard with specefic resume click
     this.props.match !== undefined &&
       this.props.match.params.step !== undefined &&
@@ -237,11 +238,11 @@ class Welcome extends Component {
   }
   // Handling navigation between Board steps
   nextStep() {
-    this.setState((state) => {
+    this.setState(state => {
       return {
         stepIndex: state.stepIndex + 1,
         currentStep: this.steps[state.stepIndex + 1],
-        mobilePreviewOn: false,
+        mobilePreviewOn: false
       };
     });
   }
@@ -250,11 +251,12 @@ class Welcome extends Component {
   }
   // stepBack
   stepBack() {
-    this.setState((state) => {
+    this.setState(state => {
       return {
-        stepIndex: state.stepIndex - 1,
-        currentStep: this.steps[state.stepIndex - 1],
-        mobilePreviewOn: true,
+        stepIndex: state.stepIndex === 0 ? 1 : state.stepIndex - 1,
+        currentStep:
+          this.steps[state.stepIndex === 0 ? 1 : state.stepIndex - 1],
+        mobilePreviewOn: true
       };
     });
   }
@@ -285,9 +287,9 @@ class Welcome extends Component {
   // Handling Delete of a components/object Employment,Language,Education etc
   handleDelete(inputType, id) {
     switch (inputType) {
-      case "Skills":
+      case 'Skills':
         this.setState({
-          skills: [],
+          skills: []
         });
         break;
       default:
@@ -302,62 +304,62 @@ class Welcome extends Component {
     //  Each employment should contain id and when an input changed inside Employment component we need to
     // know the id of that specefic employment to change it in here  same applicable for educations languages
     switch (inputName) {
-      case "Title":
+      case 'Title':
         this.setState({ title: inputValue });
         break;
-      case "First Name":
+      case 'First Name':
         this.setState({ firstname: inputValue });
         break;
-      case "Last Name":
+      case 'Last Name':
         this.setState({ lastname: inputValue });
         break;
-      case "Email":
+      case 'Email':
         this.setState({ email: inputValue });
         break;
-      case "Phone":
+      case 'Phone':
         this.setState({ phone: inputValue });
         break;
-      case "Photo":
+      case 'Photo':
         const image = new window.Image();
         image.src = inputValue;
         image.onload = () => {
           this.setState({ photo: image });
         };
         break;
-      case "Occupation":
+      case 'Occupation':
         this.setState({ occupation: inputValue });
         break;
-      case "Country":
+      case 'Country':
         this.setState({ country: inputValue });
         break;
-      case "City":
+      case 'City':
         this.setState({ city: inputValue });
         break;
-      case "Address":
+      case 'Address':
         this.setState({ address: inputValue });
         break;
-      case "Postal Code":
+      case 'Postal Code':
         this.setState({ postalcode: inputValue });
         break;
-      case "Date Of Birth":
+      case 'Date Of Birth':
         this.setState({ dateofbirth: inputValue });
         break;
-      case "Driving License":
+      case 'Driving License':
         this.setState({ drivinglicense: inputValue });
         break;
-      case "Nationality":
+      case 'Nationality':
         this.setState({ nationality: inputValue });
         break;
-      case "Professional Summary":
+      case 'Professional Summary':
         this.setState({ summary: inputValue });
         break;
-      case "Select category":
+      case 'Select category':
         this.setState({ category: inputValue });
         break;
-      case "Enter Detail":
+      case 'Enter Detail':
         this.setState({ detail: inputValue });
         break;
-      case "Job Title":
+      case 'Job Title':
         /// Check if we have any employment with th id
         // Boolean to check if the employment is already in state
         var found = false;
@@ -366,7 +368,7 @@ class Welcome extends Component {
           if (
             this.state.employments[i] !== null &&
             this.state.employments[i].id === idOptional &&
-            typeOptional === "Employment"
+            typeOptional === 'Employment'
           ) {
             found = true;
             this.state.employments[i].jobTitle = inputValue;
@@ -380,7 +382,7 @@ class Welcome extends Component {
         }
         found = false;
         break;
-      case "Begin":
+      case 'Begin':
         /// Check if we have any employment with th id
         // Boolean to check if the employment is already in state
         found = false;
@@ -389,7 +391,7 @@ class Welcome extends Component {
           if (
             this.state.employments[i] !== null &&
             this.state.employments[i].id === idOptional &&
-            typeOptional === "Employment"
+            typeOptional === 'Employment'
           ) {
             found = true;
             this.state.employments[i].begin = inputValue;
@@ -403,7 +405,7 @@ class Welcome extends Component {
         }
         found = false;
         break;
-      case "End":
+      case 'End':
         /// Check if we have any employment with th id
         // Boolean to check if the employment is already in state
         found = false;
@@ -412,7 +414,7 @@ class Welcome extends Component {
           if (
             this.state.employments[i] !== null &&
             this.state.employments[i].id === idOptional &&
-            typeOptional === "Employment"
+            typeOptional === 'Employment'
           ) {
             found = true;
             this.state.employments[i].end = inputValue;
@@ -426,7 +428,7 @@ class Welcome extends Component {
         }
         found = false;
         break;
-      case "Employer":
+      case 'Employer':
         /// Check if we have any employment with th id
         // Boolean to check if the employment is already in state
         found = false;
@@ -435,7 +437,7 @@ class Welcome extends Component {
           if (
             this.state.employments[i] !== null &&
             this.state.employments[i].id === idOptional &&
-            typeOptional === "Employment"
+            typeOptional === 'Employment'
           ) {
             found = true;
             this.state.employments[i].employer = inputValue;
@@ -449,7 +451,7 @@ class Welcome extends Component {
         }
         found = false;
         break;
-      case "Description":
+      case 'Description':
         /// Check if we have any employment with th id
         // Boolean to check if the employment is already in state
         found = false;
@@ -458,7 +460,7 @@ class Welcome extends Component {
           if (
             this.state.employments[i] !== null &&
             this.state.employments[i].id === idOptional &&
-            typeOptional === "Employment"
+            typeOptional === 'Employment'
           ) {
             found = true;
             this.state.employments[i].description = inputValue;
@@ -472,7 +474,7 @@ class Welcome extends Component {
         }
         found = false;
         break;
-      case "School":
+      case 'School':
         /// Check if we have any employment with th id
         // Boolean to check if the employment is already in state
         found = false;
@@ -481,7 +483,7 @@ class Welcome extends Component {
           if (
             this.state.educations[i] !== null &&
             this.state.educations[i].id === idOptional &&
-            typeOptional === "Education"
+            typeOptional === 'Education'
           ) {
             found = true;
             this.state.educations[i].school = inputValue;
@@ -495,7 +497,7 @@ class Welcome extends Component {
         }
         found = false;
         break;
-      case "Degree":
+      case 'Degree':
         /// Check if we have any employment with th id
         // Boolean to check if the employment is already in state
         found = false;
@@ -504,7 +506,7 @@ class Welcome extends Component {
           if (
             this.state.educations[i] !== null &&
             this.state.educations[i].id === idOptional &&
-            typeOptional === "Education"
+            typeOptional === 'Education'
           ) {
             found = true;
             this.state.educations[i].degree = inputValue;
@@ -518,7 +520,7 @@ class Welcome extends Component {
         }
         found = false;
         break;
-      case "Started":
+      case 'Started':
         /// Check if we have any employment with th id
         // Boolean to check if the employment is already in state
         found = false;
@@ -526,7 +528,7 @@ class Welcome extends Component {
         for (i = 0; i < this.state.educations.length; i++) {
           if (
             this.state.educations[i].id === idOptional &&
-            typeOptional === "Education"
+            typeOptional === 'Education'
           ) {
             found = true;
             this.state.educations[i].started = inputValue;
@@ -540,7 +542,7 @@ class Welcome extends Component {
         }
         found = false;
         break;
-      case "Finished":
+      case 'Finished':
         /// Check if we have any employment with th id
         // Boolean to check if the employment is already in state
         found = false;
@@ -548,7 +550,7 @@ class Welcome extends Component {
         for (i = 0; i < this.state.educations.length; i++) {
           if (
             this.state.educations[i].id === idOptional &&
-            typeOptional === "Education"
+            typeOptional === 'Education'
           ) {
             found = true;
             this.state.educations[i].finished = inputValue;
@@ -562,7 +564,7 @@ class Welcome extends Component {
         }
         found = false;
         break;
-      case "Course Description":
+      case 'Course Description':
         /// Check if we have any employment with th id
         // Boolean to check if the employment is already in state
         found = false;
@@ -570,7 +572,7 @@ class Welcome extends Component {
         for (i = 0; i < this.state.educations.length; i++) {
           if (
             this.state.educations[i].id === idOptional &&
-            typeOptional === "Education"
+            typeOptional === 'Education'
           ) {
             found = true;
             this.state.educations[i].description = inputValue;
@@ -584,7 +586,7 @@ class Welcome extends Component {
         }
         found = false;
         break;
-      case "Language":
+      case 'Language':
         /// Check if we have any employment with th id
         // Boolean to check if the employment is already in state
         found = false;
@@ -592,7 +594,7 @@ class Welcome extends Component {
         for (i = 0; i < this.state.languages.length; i++) {
           if (
             this.state.languages[i].id === idOptional &&
-            typeOptional === "Languages"
+            typeOptional === 'Languages'
           ) {
             found = true;
             this.state.languages[i].name = inputValue;
@@ -606,7 +608,7 @@ class Welcome extends Component {
         }
         found = false;
         break;
-      case "Level":
+      case 'Level':
         /// Check if we have any employment with th id
         // Boolean to check if the employment is already in state
         found = false;
@@ -614,7 +616,7 @@ class Welcome extends Component {
         for (i = 0; i < this.state.languages.length; i++) {
           if (
             this.state.languages[i].id === idOptional &&
-            typeOptional === "Languages"
+            typeOptional === 'Languages'
           ) {
             found = true;
             this.state.languages[i].level = inputValue;
@@ -628,7 +630,7 @@ class Welcome extends Component {
         }
         found = false;
         break;
-      case "Skill Name":
+      case 'Skill Name':
         /// Check if we have any employment with th id
         // Boolean to check if the employment is already in state
         found = false;
@@ -636,7 +638,7 @@ class Welcome extends Component {
         for (i = 0; i < this.state.skills.length; i++) {
           if (
             this.state.skills[i].id === idOptional &&
-            typeOptional === "Skills"
+            typeOptional === 'Skills'
           ) {
             found = true;
             this.state.skills[i].name = inputValue;
@@ -650,7 +652,7 @@ class Welcome extends Component {
         }
         found = false;
         break;
-      case "Rating":
+      case 'Rating':
         /// Check if we have any employment with th id
         // Boolean to check if the employment is already in state
         found = false;
@@ -658,7 +660,7 @@ class Welcome extends Component {
         for (i = 0; i < this.state.skills.length; i++) {
           if (
             this.state.skills[i].id === idOptional &&
-            typeOptional === "Skills"
+            typeOptional === 'Skills'
           ) {
             found = true;
             this.state.skills[i].rating = inputValue;
@@ -681,7 +683,7 @@ class Welcome extends Component {
     this.state.mobilePreviewOn
       ? this.setState({ mobilePreviewOn: false })
       : this.setState({ mobilePreviewOn: true });
-    this.state.currentStep == "Introduction"
+    this.state.currentStep == 'Introduction'
       ? this.setState({ isMobileTogglerShowed: false })
       : this.setState({ isMobileTogglerShowed: true });
   }
@@ -689,7 +691,7 @@ class Welcome extends Component {
   changeSelectedResume(resumeName) {
     this.setState({
       resumeName: resumeName, // Propertie
-      currentResumeName: resumeName,
+      currentResumeName: resumeName
     });
   }
   componentWillReceiveProps(nextProps) {
@@ -698,8 +700,9 @@ class Welcome extends Component {
     }
   }
   render() {
+    console.log('first here');
     return (
-      <div className="wrapper">
+      <div className='wrapper'>
         <AnimatePresence>
           {this.state.isInitialisationShowed && (
             <motion.div
@@ -709,12 +712,12 @@ class Welcome extends Component {
             >
               <InitialisationWrapper
                 closeInitialisation={this.closeInitialisation}
-              />{" "}
+              />{' '}
             </motion.div>
           )}
         </AnimatePresence>
         {/* {this.props.match.params.step != undefined && alert(this.props.match.params.step)} */}
-        <div className="actions">
+        <div className='actions'>
           <Action
             third={this.state.third}
             goThirdStep={this.goThirdStep}
@@ -739,7 +742,7 @@ class Welcome extends Component {
               educations: this.state.educations,
               languages: this.state.languages,
               skills: this.state.skills,
-              photo: this.state.photo,
+              photo: this.state.photo
             }}
             setCurrentStep={this.setCurrentStep}
             redirectToDashboard={this.redirectToDashboard}
@@ -755,8 +758,8 @@ class Welcome extends Component {
         <div
           className={
             this.state.mobilePreviewOn
-              ? " right-panel  boardShowed"
-              : "right-panel "
+              ? ' right-panel  boardShowed'
+              : 'right-panel '
           }
         >
           <Board
@@ -786,7 +789,7 @@ class Welcome extends Component {
               educations: this.state.educations,
               languages: this.state.languages,
               skills: this.state.skills,
-              photo: this.state.photo,
+              photo: this.state.photo
             }}
             currentStep={this.state.currentStep}
           />
@@ -795,18 +798,18 @@ class Welcome extends Component {
           appear={true}
           in={true}
           timeout={100}
-          classNames="previewfade"
+          classNames='previewfade'
         >
           {this.state.isMobileTogglerShowed ? (
-            <div onClick={this.handlePreviewToggle} className="previewButton">
+            <div onClick={this.handlePreviewToggle} className='previewButton'>
               <img
-                className="previewImg"
+                className='previewImg'
                 src={
-                  this.state.currentStep == "Introduction"
+                  this.state.currentStep == 'Introduction'
                     ? NextImg
                     : PreviewImg
                 }
-                alt="Preview"
+                alt='Preview'
               />
             </div>
           ) : (

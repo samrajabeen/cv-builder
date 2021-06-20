@@ -1,11 +1,11 @@
-import React, { Component } from "react";
-import "./DropdownInput.scss";
+import React, { Component } from 'react';
+import './DropdownInput.scss';
 class DropdownInput extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isShowed: false,
-      value: "",
+      value: ''
     };
     this.togglerHandler = this.togglerHandler.bind(this);
     this.options = this.options.bind(this);
@@ -20,7 +20,7 @@ class DropdownInput extends Component {
   optionHandler(event) {
     this.setState({
       value: event.target.innerText,
-      isShowed: false,
+      isShowed: false
     });
     this.props.handleInputs(this.props.title, event.target.innerText);
   }
@@ -32,8 +32,8 @@ class DropdownInput extends Component {
       this.optionsList.push(
         <div
           key={index}
-          onClick={(event) => this.optionHandler(event)}
-          className="dropdownOption"
+          onClick={event => this.optionHandler(event)}
+          className='dropdownOption'
         >
           {value}
         </div>
@@ -43,18 +43,18 @@ class DropdownInput extends Component {
   }
   render() {
     return (
-      <div className="dropdownInput">
-        <span className="dropdownInputTitle">{this.props.title}</span>
+      <div className='dropdownInput'>
+        <span className='dropdownInputTitle'>{this.props.title}</span>
         <input
           readOnly={true}
-          value={this.state.value}
+          value={this.props.value}
           onClick={this.togglerHandler}
         />
-        <span className="border"></span>
+        <span className='border'></span>
         <div
-          style={{ color: "black" }}
+          style={{ color: 'black' }}
           className={
-            this.state.isShowed ? "dropdownOptions" : "dropdownOptions hidden"
+            this.state.isShowed ? 'dropdownOptions' : 'dropdownOptions hidden'
           }
         >
           {this.options()}
